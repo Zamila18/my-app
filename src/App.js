@@ -17,14 +17,15 @@ const authorImages = {
   'Commenter 3': commenter3,
 };
 
-// Dummy data for posts
+// Dummy data for posts  ✅ TRAVEL THEME
 const dummyPosts = new Array(15).fill(null).map((_, i) => ({
   id: i + 1,
-  title: `CSE2200`,
-  content: `Computer Science and Engineering (CSE) focuses on the study of computer systems, software, and hardware.
-              It involves programming, algorithms, networks, and artificial intelligence.
-              CSE professionals design and develop innovative solutions for real-world technological problems.`,
-  image: `/assets/istockphoto-1140180560-612x612.jpg`,
+  title: `Backpacking Sri Lanka: 7-Day Coastal Itinerary`,
+  content: `Thinking about a budget-friendly tropical escape? This 7-day Sri Lanka coastal route covers golden beaches, scenic train rides, street food, and sunrise hikes.
+              Start in Negombo, then head south to Galle’s Dutch fort and the palm-fringed bays of Unawatuna and Mirissa.
+              Ride the iconic Kandy–Ella train for misty tea hills, and finish with turtles, surf lessons, and stilt fishermen along the south coast.
+              Tips include using local buses, guesthouses with breakfast, and grabbing kottu roti or hoppers for cheap, delicious meals.`,
+  image: `/assets/istockphoto-1140180560-612x612.jpg`, // optional: replace with a travel image you have
   authorId: (i % 5) + 1,
   authorName: `Zamila Mohammad`,
   date: `16th august 2025`,
@@ -33,13 +34,13 @@ const dummyPosts = new Array(15).fill(null).map((_, i) => ({
       id: 1,
       author: `Commenter ${(i % 3) + 1}`,
       date: `25 july 2025`,
-      content: `CSE is the backbone of modern technology and innovation.`
+      content: `Loved the train tip from Kandy to Ella! Please add seat class suggestions and how early to book.`
     },
     {
       id: 2,
       author: `Commenter ${(i % 3) + 2}`,
       date: `30 july 2025`,
-      content: `It is a field that shapes the future through coding and creativity.`
+      content: `Great coastal picks. Would be awesome to list hostel costs and beginner-friendly surf spots near Mirissa.`
     }
   ]
 }));
@@ -248,8 +249,9 @@ const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
           </p>
 
           <div style={{ backgroundColor: '#f8fafc', padding: '24px', borderRadius: '12px', border: '1px solid #eef2f7' }}>
+            {/* ✅ Travel-focused bio line */}
             <p style={{ color: '#374151' }}>
-              Welcome to the profile of <strong>{name}</strong>. Passionate learner exploring technology and new innovations.
+              Welcome to the profile of <strong>{name}</strong>. Passionate traveler exploring cultures, cuisines, and new adventures.
             </p>
 
             <div style={{
@@ -362,7 +364,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-// Main Post Component (title styled; comment box kept + now functional)
+// Main Post Component (title styled; comment box kept + functional)
 const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) => {
   const [newComment, setNewComment] = useState('');
 
@@ -433,7 +435,7 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) =
           {post.comments.length} Comments
         </h3>
 
-        {/* Write-a-comment UI (kept) — now posts comments */}
+        {/* Write-a-comment UI */}
         <div style={{ marginBottom: '24px' }}>
           <textarea
             placeholder="Write your comment..."
@@ -526,7 +528,7 @@ const App = () => {
     setSelectedRole('Author');
   };
 
-  // ✅ Add a new comment to a post
+  // Add a new comment to a post
   const handleAddComment = (postId, content) => {
     const fmt = new Date().toLocaleDateString('en-GB', {
       day: '2-digit', month: 'long', year: 'numeric'
@@ -541,8 +543,8 @@ const App = () => {
             ...p.comments,
             {
               id: Date.now(),
-              author: `Commenter ${nextIndex}`, // keeps the same naming style
-              date: fmt.toLowerCase(),         // looks close to your sample format
+              author: `Commenter ${nextIndex}`,
+              date: fmt.toLowerCase(),
               content
             }
           ]
