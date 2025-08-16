@@ -1,16 +1,13 @@
 // src/App.js
 import React, { useState } from 'react';
-
-/* === Avatar imports (place files under src/assets/avatars/) === */
 import zamila from './assets/avatars/zamila.png';
 import commenter1 from './assets/avatars/commenter1.png';
 import commenter2 from './assets/avatars/commenter2.png';
 import commenter3 from './assets/avatars/commenter3.png';
 
-/* === NEW: Travel hero image (place at src/assets/travel.png) === */
+
 import travel from './assets/travel.png';
 
-/* === Map names to avatar images === */
 const authorImages = {
   'Zamila Mohammad': zamila,
   'Commenter 1': commenter1,
@@ -26,7 +23,7 @@ const dummyPosts = new Array(15).fill(null).map((_, i) => ({
               Start in Negombo, then head south to Galle’s Dutch fort and the palm-fringed bays of Unawatuna and Mirissa.
               Ride the iconic Kandy–Ella train for misty tea hills, and finish with turtles, surf lessons, and stilt fishermen along the south coast.
               Tips include using local buses, guesthouses with breakfast, and grabbing kottu roti or hoppers for cheap, delicious meals.`,
-  image: travel, // ⬅️ shows your travel hero image
+  image: travel, 
   authorId: (i % 5) + 1,
   authorName: `Zamila Mohammad`,
   date: `16th august 2025`,
@@ -188,7 +185,7 @@ const Comment = ({ comment, onAuthorClick }) => {
   );
 };
 
-// Author Profile (avatar map; travel bio)
+
 const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
   const name = authorName ?? `Zamila ${authorId}`;
   const initials = name.split(' ').map(n => n[0]).join('');
@@ -361,7 +358,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-// Blog Post (title styled; travel hero image; comment box functional)
+
 const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) => {
   const [newComment, setNewComment] = useState('');
 
@@ -458,7 +455,7 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) =
             style={{
               width: '100%',
               padding: '12px',
-              border: '1px solid #d1d5db',   // ✅ fixed line
+              border: '1px solid #d1d5db',   
               borderRadius: '8px',
               resize: 'none',
               fontSize: '14px',
