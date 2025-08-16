@@ -385,8 +385,8 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
     fontSize: '32px',
     lineHeight: 1.15,
     fontWeight: 800,
-    color: 'rgb(14, 165, 233)', // ← bright cyan
-    fontFamily: '"Poppins","Segoe UI",Roboto,Arial,sans-serif', // ← new font
+    color: 'rgba(145, 197, 221, 1)', // ← bright cyan
+   fontFamily: 'Georgia, "Times New Roman", serif',
     letterSpacing: '-0.01em',
     marginBottom: '12px',
     textShadow: '0 1px 0 rgba(255,255,255,0.6)'
