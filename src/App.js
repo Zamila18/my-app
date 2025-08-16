@@ -123,7 +123,7 @@ const Reactions = ({ postId, type = 'post' }) => {
 const Comment = ({ comment }) => {
   return (
     <div style={{ 
-      backgroundColor: '#f9fafb', 
+      backgroundColor: '#c9e1f1ff', 
       padding: '16px', 
       borderRadius: '8px', 
       marginBottom: '12px' 
@@ -168,7 +168,7 @@ const Comment = ({ comment }) => {
 
 // Author Profile Component
 const AuthorProfile = ({ authorId, onBack }) => {
-  const author = `Naima ${authorId}`;
+  const author = `Zamila ${authorId}`;
   
   return (
     <div style={{ maxWidth: '768px', margin: '0 auto', padding: '24px' }}>
@@ -178,8 +178,7 @@ const AuthorProfile = ({ authorId, onBack }) => {
           marginBottom: '16px',
           padding: '8px 16px',
           backgroundColor: '#f3f4f6',
-          color: '#374151',
-          border: 'none',
+          color: '#1e60caff',
           borderRadius: '6px',
           cursor: 'pointer'
         }}
@@ -458,7 +457,7 @@ const App = () => {
           <h1 style={{ fontSize: '30px', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>
             Blog Posts
           </h1>
-          <p style={{ color: '#6b7280' }}>Discover amazing content from our writers</p>
+          <p style={{ color: '#6b7280',}}>Discover amazing content from our writers</p>
         </header>
         
         <BlogPost 
