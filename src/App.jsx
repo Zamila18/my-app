@@ -9,7 +9,10 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        {/* Existing author route */}
         <Route path="/author/:authorId" element={<AuthorProfile />} />
+        {/* Optional: commenter profiles by name (e.g., /commenter/Commenter%201) */}
+        <Route path="/commenter/:name" element={<AuthorProfile />} />
       </Routes>
     </Router>
   );
