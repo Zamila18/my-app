@@ -1,6 +1,22 @@
 // src/App.js
 import React, { useState } from 'react';
 
+/* === Avatar imports (place files under src/assets/avatars/) ===
+   Example files (you can add/remove as needed) */
+import zamila from './assets/avatars/zamila.png';
+import commenter1 from './assets/avatars/commenter1.png';
+import commenter2 from './assets/avatars/commenter2.png';
+import commenter3 from './assets/avatars/commenter3.png';
+
+/* === Map names to avatar images ===
+   The key MUST match the display name used in the UI */
+const authorImages = {
+  'Zamila Mohammad': zamila,
+  'Commenter 1': commenter1,
+  'Commenter 2': commenter2,
+  'Commenter 3': commenter3,
+};
+
 // Dummy data for posts
 const dummyPosts = new Array(15).fill(null).map((_, i) => ({
   id: i + 1,
@@ -35,38 +51,25 @@ const reactions = [
   { emoji: '😢', label: 'Sad' }
 ];
 
-// Reactions Component - UPDATED WITH CHANGES
+// Reactions Component
 const Reactions = ({ postId, type = 'post' }) => {
   const [activeReaction, setActiveReaction] = useState(null);
-  // CHANGED: Updated initial values to actual numbers instead of percentages
   const [reactionCounts, setReactionCounts] = useState({
-    0: 42,  // Like: 42 reactions
-    1: 156, // Love: 156 reactions
-    2: 8,   // Angry: 8 reactions
-    3: 12   // Sad: 12 reactions
+    0: 42, 1: 156, 2: 8, 3: 12
   });
 
   const handleReactionClick = (index) => {
-    // CHANGED: Updated logic to increment/decrement counts when clicking reactions
     setReactionCounts(prev => {
-      const newCounts = { ...prev };
-      
+      const next = { ...prev };
       if (activeReaction === index) {
-        // If clicking the same reaction, remove it and decrease count
-        newCounts[index] = Math.max(0, newCounts[index] - 1);
+        next[index] = Math.max(0, next[index] - 1);
         setActiveReaction(null);
       } else {
-        // If clicking a different reaction
-        if (activeReaction !== null) {
-          // Decrease count of previously active reaction
-          newCounts[activeReaction] = Math.max(0, newCounts[activeReaction] - 1);
-        }
-        // Increase count of new reaction
-        newCounts[index] = newCounts[index] + 1;
+        if (activeReaction !== null) next[activeReaction] = Math.max(0, next[activeReaction] - 1);
+        next[index] = next[index] + 1;
         setActiveReaction(index);
       }
-      
-      return newCounts;
+      return next;
     });
   };
 
@@ -90,23 +93,12 @@ const Reactions = ({ postId, type = 'post' }) => {
               cursor: 'pointer',
               transition: 'all 0.2s'
             }}
-            onMouseOver={(e) => {
-              if (activeReaction !== index) {
-                e.target.style.backgroundColor = '#f3f4f6';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (activeReaction !== index) {
-                e.target.style.backgroundColor = '#f9fafb';
-              }
-            }}
           >
             <span style={{ fontSize: '18px' }}>{reaction.emoji}</span>
             <span style={{ fontSize: '14px', fontWeight: '500' }}>{reaction.label}</span>
           </button>
         ))}
       </div>
-      {/* CHANGED: Updated display to show actual numbers instead of percentages */}
       <div style={{ display: 'flex', gap: '16px', fontSize: '14px', color: '#6b7280' }}>
         {reactions.map((reaction, index) => (
           <span key={index}>
@@ -118,16 +110,16 @@ const Reactions = ({ postId, type = 'post' }) => {
   );
 };
 
-// Comment Component  ➜ (1) NEW RGB background, (4) clickable commenter -> profile
+// Comment Component (RGB bg + clickable commenter + avatar)
 const Comment = ({ comment, onAuthorClick }) => {
   const initials = comment.author.split(' ').map(n => n[0]).join('');
+  const avatarSrc = authorImages[comment.author] || null;
 
   return (
-    <div style={{ 
-      // ❗ new RGB color for comment cards (soft blue)
-      backgroundColor: 'rgb(227, 242, 253)', 
-      padding: '16px', 
-      borderRadius: '12px', 
+    <div style={{
+      backgroundColor: 'rgb(227, 242, 253)',
+      padding: '16px',
+      borderRadius: '12px',
       marginBottom: '12px',
       border: '1px solid rgba(2, 132, 199, 0.15)'
     }}>
@@ -138,19 +130,22 @@ const Comment = ({ comment, onAuthorClick }) => {
           style={{
             width: '36px',
             height: '36px',
-            background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
             borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            overflow: 'hidden',
             border: 'none',
             cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(59,130,246,.25)'
+            background: avatarSrc ? 'transparent' : 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+            boxShadow: '0 2px 8px rgba(59,130,246,.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
-          <span style={{ color: 'white', fontSize: '14px', fontWeight: 700 }}>
-            {initials}
-          </span>
+          {avatarSrc ? (
+            <img src={avatarSrc} alt={comment.author} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <span style={{ color: 'white', fontSize: '14px', fontWeight: 700 }}>{initials}</span>
+          )}
         </button>
 
         <div>
@@ -194,15 +189,16 @@ const Comment = ({ comment, onAuthorClick }) => {
   );
 };
 
-// Author Profile Component  ➜ (3) style tweaks + supports commenters
+// Author Profile (supports avatar map; fallback initials)
 const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
   const name = authorName ?? `Zamila ${authorId}`;
   const initials = name.split(' ').map(n => n[0]).join('');
+  const avatarSrc = authorImages[name] || null;
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)', padding: '24px' }}>
       <div style={{ maxWidth: '768px', margin: '0 auto' }}>
-        <button 
+        <button
           onClick={onBack}
           style={{
             marginBottom: '16px',
@@ -225,20 +221,25 @@ const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
           border: '1px solid #e5e7eb',
           boxShadow: '0 8px 30px rgba(2,6,23,0.06)'
         }}>
-          <div style={{
-            width: '104px',
-            height: '104px',
-            background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
-            borderRadius: '9999px',
-            margin: '0 auto 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 6px 16px rgba(59,130,246,.35)'
-          }}>
-            <span style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>
-              {initials}
-            </span>
+          <div
+            style={{
+              width: '104px',
+              height: '104px',
+              borderRadius: '9999px',
+              margin: '0 auto 16px',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: avatarSrc ? 'transparent' : 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+              boxShadow: '0 6px 16px rgba(59,130,246,.35)'
+            }}
+          >
+            {avatarSrc ? (
+              <img src={avatarSrc} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <span style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>{initials}</span>
+            )}
           </div>
 
           <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>{name}</h2>
@@ -251,13 +252,13 @@ const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
               Welcome to the profile of <strong>{name}</strong>. Passionate learner exploring technology and new innovations.
             </p>
 
-            <div style={{ 
-              marginTop: '16px', 
-              display: 'flex', 
-              justifyContent: 'center', 
-              gap: '20px', 
-              fontSize: '14px', 
-              color: '#475569' 
+            <div style={{
+              marginTop: '16px',
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '20px',
+              fontSize: '14px',
+              color: '#475569'
             }}>
               <span>📝 25 Posts</span>
               <span>📅 Joined Feb 2023</span>
@@ -274,45 +275,37 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const getPageNumbers = () => {
     const pages = [];
     const maxVisible = 5;
-    
+
     if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       if (currentPage <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(i);
-        }
+        for (let i = 1; i <= 4; i++) pages.push(i);
         pages.push('...');
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 2) {
         pages.push(1);
         pages.push('...');
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i);
-        }
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
       } else {
         pages.push(1);
         pages.push('...');
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i);
-        }
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
         pages.push('...');
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      gap: '8px', 
-      marginTop: '32px' 
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: '8px',
+      marginTop: '32px'
     }}>
       <button
         onClick={() => onPageChange(currentPage - 1)}
@@ -329,7 +322,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       >
         Previous
       </button>
-      
+
       {getPageNumbers().map((page, index) => (
         <button
           key={index}
@@ -349,7 +342,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           {page}
         </button>
       ))}
-      
+
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
@@ -369,8 +362,17 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-// Main Post Component
-const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
+// Main Post Component (title styled; comment box kept + now functional)
+const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) => {
+  const [newComment, setNewComment] = useState('');
+
+  const handlePost = () => {
+    const text = newComment.trim();
+    if (!text) return;
+    onAddComment(post.id, text);
+    setNewComment('');
+  };
+
   return (
     <article style={{
       backgroundColor: 'white',
@@ -379,33 +381,31 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
       padding: '24px',
       marginBottom: '24px'
     }}>
-      {/* (2) Title styled with color + font */}
       <h1
-  style={{
-    fontSize: '32px',
-    lineHeight: 1.15,
-    fontWeight: 800,
-    color: 'rgba(145, 197, 221, 1)', // ← bright cyan
-   fontFamily: 'Georgia, "Times New Roman", serif',
-    letterSpacing: '-0.01em',
-    marginBottom: '12px',
-    textShadow: '0 1px 0 rgba(255,255,255,0.6)'
-  }}
->
-  {post.title}
-</h1>
+        style={{
+          fontSize: '32px',
+          lineHeight: 1.15,
+          fontWeight: 800,
+          color: 'rgba(145, 197, 221, 1)', // accent
+          fontFamily: 'Georgia, "Times New Roman", serif',
+          letterSpacing: '-0.01em',
+          marginBottom: '12px',
+          textShadow: '0 1px 0 rgba(255,255,255,0.6)'
+        }}
+      >
+        {post.title}
+      </h1>
 
-      
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: '8px', 
-        marginBottom: '16px', 
-        fontSize: '14px', 
-        color: '#6b7280' 
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        marginBottom: '16px',
+        fontSize: '14px',
+        color: '#6b7280'
       }}>
         <span>By</span>
-        <button 
+        <button
           onClick={() => onAuthorClick(post.authorId, post.authorName)}
           style={{
             color: '#2563eb',
@@ -421,21 +421,24 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
         <span>•</span>
         <span>{post.date}</span>
       </div>
-      
+
       <div style={{ marginBottom: '24px' }}>
         <p style={{ color: '#374151', lineHeight: '1.6' }}>{post.content}</p>
       </div>
-      
+
       <Reactions postId={post.id} />
-      
+
       <div style={{ marginTop: '32px', borderTop: '1px solid #e5e7eb', paddingTop: '24px' }}>
         <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
           {post.comments.length} Comments
         </h3>
-        
+
+        {/* Write-a-comment UI (kept) — now posts comments */}
         <div style={{ marginBottom: '24px' }}>
           <textarea
             placeholder="Write your comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
             style={{
               width: '100%',
               padding: '12px',
@@ -456,20 +459,23 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
               e.target.style.boxShadow = 'none';
             }}
           />
-          <button style={{
-            marginTop: '8px',
-            padding: '8px 16px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}>
+          <button
+            onClick={handlePost}
+            style={{
+              marginTop: '8px',
+              padding: '8px 16px',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
             Post Comment
           </button>
         </div>
-        
+
         <div>
           {post.comments.map(comment => (
             <Comment key={comment.id} comment={comment} onAuthorClick={onCommentAuthorClick} />
@@ -482,20 +488,21 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
 
 // Main App Component
 const App = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentView, setCurrentView] = useState('posts'); // 'posts' or 'author'
-  const [selectedAuthorId, setSelectedAuthorId] = useState(null);
+  // Keep posts in state so new comments can be added
+  const [posts, setPosts] = useState(dummyPosts);
 
-  // NEW: when opening profile we can also carry a name + role for commenters
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 1;
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+
+  const [currentView, setCurrentView] = useState('posts'); // 'posts' | 'author'
+  const [selectedAuthorId, setSelectedAuthorId] = useState(null);
   const [selectedAuthorName, setSelectedAuthorName] = useState(null);
   const [selectedRole, setSelectedRole] = useState('Author');
-  
-  const postsPerPage = 1; // Show one post per page for simplicity
-  const totalPages = Math.ceil(dummyPosts.length / postsPerPage);
-  
+
   const getCurrentPost = () => {
     const startIndex = (currentPage - 1) * postsPerPage;
-    return dummyPosts[startIndex];
+    return posts[startIndex];
   };
 
   const handleAuthorClick = (authorId, authorName) => {
@@ -505,9 +512,8 @@ const App = () => {
     setCurrentView('author');
   };
 
-  // NEW: commenters open profile too
   const handleCommentAuthorClick = (commenterName) => {
-    setSelectedAuthorId(null); // not needed for commenters
+    setSelectedAuthorId(null);
     setSelectedAuthorName(commenterName);
     setSelectedRole('Commenter');
     setCurrentView('author');
@@ -518,6 +524,31 @@ const App = () => {
     setSelectedAuthorId(null);
     setSelectedAuthorName(null);
     setSelectedRole('Author');
+  };
+
+  // ✅ Add a new comment to a post
+  const handleAddComment = (postId, content) => {
+    const fmt = new Date().toLocaleDateString('en-GB', {
+      day: '2-digit', month: 'long', year: 'numeric'
+    }); // e.g., "16 August 2025"
+    setPosts(prev =>
+      prev.map(p => {
+        if (p.id !== postId) return p;
+        const nextIndex = p.comments.length + 1;
+        return {
+          ...p,
+          comments: [
+            ...p.comments,
+            {
+              id: Date.now(),
+              author: `Commenter ${nextIndex}`, // keeps the same naming style
+              date: fmt.toLowerCase(),         // looks close to your sample format
+              content
+            }
+          ]
+        };
+      })
+    );
   };
 
   if (currentView === 'author') {
@@ -538,19 +569,22 @@ const App = () => {
           <h1 style={{ fontSize: '30px', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>
             Blog Posts
           </h1>
-          <p style={{ color: '#6b7280',}}>Discover amazing content from our writers</p>
+          <p style={{ color: '#6b7280' }}>Discover amazing content from our writers</p>
         </header>
-        
-        <BlogPost 
-          post={getCurrentPost()} 
+
+        <BlogPost
+          post={getCurrentPost()}
           onAuthorClick={handleAuthorClick}
           onCommentAuthorClick={handleCommentAuthorClick}
+          onAddComment={handleAddComment}
         />
-        
+
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={(page) => {
+            if (page >= 1 && page <= totalPages) setCurrentPage(page);
+          }}
         />
       </div>
     </div>
