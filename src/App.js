@@ -1,15 +1,16 @@
 // src/App.js
 import React, { useState } from 'react';
 
-/* === Avatar imports (place files under src/assets/avatars/) ===
-   Example files (you can add/remove as needed) */
+/* === Avatar imports (place files under src/assets/avatars/) === */
 import zamila from './assets/avatars/zamila.png';
 import commenter1 from './assets/avatars/commenter1.png';
 import commenter2 from './assets/avatars/commenter2.png';
 import commenter3 from './assets/avatars/commenter3.png';
 
-/* === Map names to avatar images ===
-   The key MUST match the display name used in the UI */
+/* === NEW: Travel hero image (place at src/assets/travel.png) === */
+import travel from './assets/travel.png';
+
+/* === Map names to avatar images === */
 const authorImages = {
   'Zamila Mohammad': zamila,
   'Commenter 1': commenter1,
@@ -17,7 +18,7 @@ const authorImages = {
   'Commenter 3': commenter3,
 };
 
-// Dummy data for posts  ✅ TRAVEL THEME
+/* === Dummy data for posts — TRAVEL THEME === */
 const dummyPosts = new Array(15).fill(null).map((_, i) => ({
   id: i + 1,
   title: `Backpacking Sri Lanka: 7-Day Coastal Itinerary`,
@@ -25,7 +26,7 @@ const dummyPosts = new Array(15).fill(null).map((_, i) => ({
               Start in Negombo, then head south to Galle’s Dutch fort and the palm-fringed bays of Unawatuna and Mirissa.
               Ride the iconic Kandy–Ella train for misty tea hills, and finish with turtles, surf lessons, and stilt fishermen along the south coast.
               Tips include using local buses, guesthouses with breakfast, and grabbing kottu roti or hoppers for cheap, delicious meals.`,
-  image: `/assets/istockphoto-1140180560-612x612.jpg`, // optional: replace with a travel image you have
+  image: travel, // ⬅️ shows your travel hero image
   authorId: (i % 5) + 1,
   authorName: `Zamila Mohammad`,
   date: `16th august 2025`,
@@ -52,12 +53,9 @@ const reactions = [
   { emoji: '😢', label: 'Sad' }
 ];
 
-// Reactions Component
 const Reactions = ({ postId, type = 'post' }) => {
   const [activeReaction, setActiveReaction] = useState(null);
-  const [reactionCounts, setReactionCounts] = useState({
-    0: 42, 1: 156, 2: 8, 3: 12
-  });
+  const [reactionCounts, setReactionCounts] = useState({ 0: 42, 1: 156, 2: 8, 3: 12 });
 
   const handleReactionClick = (index) => {
     setReactionCounts(prev => {
@@ -111,7 +109,7 @@ const Reactions = ({ postId, type = 'post' }) => {
   );
 };
 
-// Comment Component (RGB bg + clickable commenter + avatar)
+// Comment (RGB bg + clickable commenter + avatar)
 const Comment = ({ comment, onAuthorClick }) => {
   const initials = comment.author.split(' ').map(n => n[0]).join('');
   const avatarSrc = authorImages[comment.author] || null;
@@ -190,7 +188,7 @@ const Comment = ({ comment, onAuthorClick }) => {
   );
 };
 
-// Author Profile (supports avatar map; fallback initials)
+// Author Profile (avatar map; travel bio)
 const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
   const name = authorName ?? `Zamila ${authorId}`;
   const initials = name.split(' ').map(n => n[0]).join('');
@@ -249,7 +247,6 @@ const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
           </p>
 
           <div style={{ backgroundColor: '#f8fafc', padding: '24px', borderRadius: '12px', border: '1px solid #eef2f7' }}>
-            {/* ✅ Travel-focused bio line */}
             <p style={{ color: '#374151' }}>
               Welcome to the profile of <strong>{name}</strong>. Passionate traveler exploring cultures, cuisines, and new adventures.
             </p>
@@ -272,7 +269,7 @@ const AuthorProfile = ({ authorId, authorName, role = 'Author', onBack }) => {
   );
 };
 
-// Pagination Component
+// Pagination
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const getPageNumbers = () => {
     const pages = [];
@@ -364,7 +361,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-// Main Post Component (title styled; comment box kept + functional)
+// Blog Post (title styled; travel hero image; comment box functional)
 const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) => {
   const [newComment, setNewComment] = useState('');
 
@@ -388,7 +385,7 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) =
           fontSize: '32px',
           lineHeight: 1.15,
           fontWeight: 800,
-          color: 'rgba(145, 197, 221, 1)', // accent
+          color: 'rgba(145, 197, 221, 1)',
           fontFamily: 'Georgia, "Times New Roman", serif',
           letterSpacing: '-0.01em',
           marginBottom: '12px',
@@ -397,6 +394,23 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) =
       >
         {post.title}
       </h1>
+
+      {/* Travel hero image */}
+      {post.image && (
+        <div style={{ margin: '12px 0 20px 0' }}>
+          <img
+            src={post.image}
+            alt={post.title}
+            style={{
+              width: '100%',
+              height: '220px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+              border: '1px solid #e5e7eb'
+            }}
+          />
+        </div>
+      )}
 
       <div style={{
         display: 'flex',
@@ -444,7 +458,7 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) =
             style={{
               width: '100%',
               padding: '12px',
-              border: '1px solid #d1d5db',
+              border: '1px solid #d1d5db',   // ✅ fixed line
               borderRadius: '8px',
               resize: 'none',
               fontSize: '14px',
@@ -488,9 +502,8 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick, onAddComment }) =
   );
 };
 
-// Main App Component
+// Main App
 const App = () => {
-  // Keep posts in state so new comments can be added
   const [posts, setPosts] = useState(dummyPosts);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -528,11 +541,10 @@ const App = () => {
     setSelectedRole('Author');
   };
 
-  // Add a new comment to a post
   const handleAddComment = (postId, content) => {
     const fmt = new Date().toLocaleDateString('en-GB', {
       day: '2-digit', month: 'long', year: 'numeric'
-    }); // e.g., "16 August 2025"
+    });
     setPosts(prev =>
       prev.map(p => {
         if (p.id !== postId) return p;
