@@ -380,16 +380,21 @@ const BlogPost = ({ post, onAuthorClick, onCommentAuthorClick }) => {
       marginBottom: '24px'
     }}>
       {/* (2) Title styled with color + font */}
-      <h1 style={{
-        fontSize: '28px',
-        fontWeight: 800,
-        color: '#0ea5e9',              // cyan-ish accent
-        marginBottom: '12px',
-        fontFamily: 'Georgia, "Times New Roman", serif',
-        letterSpacing: '-0.01em'
-      }}>
-        {post.title}
-      </h1>
+      <h1
+  style={{
+    fontSize: '32px',
+    lineHeight: 1.15,
+    fontWeight: 800,
+    color: 'rgb(14, 165, 233)', // ← bright cyan
+    fontFamily: '"Poppins","Segoe UI",Roboto,Arial,sans-serif', // ← new font
+    letterSpacing: '-0.01em',
+    marginBottom: '12px',
+    textShadow: '0 1px 0 rgba(255,255,255,0.6)'
+  }}
+>
+  {post.title}
+</h1>
+
       
       <div style={{ 
         display: 'flex', 
